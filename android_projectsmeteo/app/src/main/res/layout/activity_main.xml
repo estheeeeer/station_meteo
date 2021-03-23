@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@color/blue">
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5sp"
+        android:layout_marginRight="5sp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif"
+        android:textSize="45sp" />
+
+    <ImageButton
+        android:id="@+id/weather"
+        android:layout_width="150sp"
+        android:layout_height="150sp"
+        android:layout_marginTop="50sp"
+        android:layout_marginBottom="50sp"
+        android:background="@drawable/ic__277949122"/>
+    <TextView
+        android:id="@+id/temp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="45sp"
+        android:textColor="@color/white"
+        android:fontFamily="sans-serif"
+        android:textStyle="bold"
+        android:text="80°c"/>
+
+    <TextView
+        android:id="@+id/infos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30sp"
+        android:textSize="30sp"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/white"
+        android:text="Informations"/>
+
+</LinearLayout>
