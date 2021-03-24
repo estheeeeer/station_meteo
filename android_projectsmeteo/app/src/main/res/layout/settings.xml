@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/blue">
+    android:background="@color/grey">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="30sp"
+            android:textSize="25sp"
             android:gravity="left"
             android:layout_weight="1"
             android:textColor="@color/white"
@@ -27,7 +27,7 @@
                 android:id="@+id/edittime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="30sp"
+                android:textSize="25sp"
                 android:textColorHint="@color/white_transparent"
                 android:background="@null"
                 android:inputType="phone"
@@ -47,7 +47,7 @@
                     android:layout_weight="1"
                     android:layout_marginRight="5sp"
                     android:textColor="@color/white"
-                    android:textSize="30sp"
+                    android:textSize="25sp"
                     android:text=" s"/>
             </LinearLayout>
         </RelativeLayout>
@@ -65,7 +65,7 @@
             android:layout_gravity="center"
             android:layout_marginLeft="5sp"
             android:gravity="left"
-            android:textSize="30sp"
+            android:textSize="25sp"
             android:textColor="@color/white"
             android:text="IP"/>
         <LinearLayout
@@ -78,7 +78,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5sp"
-                android:textSize="30sp"
+                android:textSize="25sp"
                 android:textColorHint="@color/white_transparent"
                 android:background="@null"
                 android:inputType="phone"

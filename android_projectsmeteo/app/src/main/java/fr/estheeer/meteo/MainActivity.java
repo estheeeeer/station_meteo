@@ -32,7 +32,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView date;
     private ImageButton weather;
     private TextView temp;
-    private TextView infos;
+    private TextView wind;
+    private TextView pression;
+    private TextView humidity;
+    private TextView luminosite;
     private Map<String, String> datemap;
     private Map<String, String> monthsmap;
 
@@ -45,7 +48,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.date = super.findViewById(R.id.date);
         this.weather = super.findViewById(R.id.weather);
         this.temp = super.findViewById(R.id.temp);
-        this.infos = super.findViewById(R.id.infos);
+        this.wind = super.findViewById(R.id.wind);
+        this.pression = super.findViewById(R.id.pression);
+        this.humidity = super.findViewById(R.id.humidity);
+        this.luminosite = super.findViewById(R.id.lux);
         this.datemap = new HashMap<>();
         this.monthsmap  = new HashMap<>();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd");
@@ -69,9 +75,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.monthsmap.put("oct.", "Octobre");
         this.monthsmap.put("nov.", "Novembre");
         this.monthsmap.put("dec.", "Décembre");
-        this.setData(-1,-9000,-1);
+        this.setData(-1,-9000,-1,-1,-1);
         try {
-            Client c = new Client("192.168.1.19",2568);
+            Client c = new Client("192.168.1.18",2568);
             c.open();
             c.registerListener(this);
         } catch (IOException e) {
@@ -87,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent i = new Intent(this, Settings.class);
         super.startActivity(i);
     }
-    public void setData(double humidite,double tempe, double lux){
+    public void setData(double humidite,double tempe, double lux,double wind, double pression){
         Date dated = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("E;dd;MMM");
         String strdate = formatter.format(dated);
@@ -114,8 +120,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             strlux = String.valueOf(lux);
         }
 
-        String informations = "humidité : "+strhumidite+"\nluminosité : "+strlux+"\ntemperature : "+temperature;
-        infos.setText(informations);
+        String strwindspeed = "impossible";
+        if (wind != -1){
+            strwindspeed = String.valueOf(wind);
+        }
+
+        String strpression = "impossible";
+        if (pression != -1){
+            strpression = String.valueOf(pression);
+        }
+
+        this.luminosite.setText(strlux);
+        this.humidity.setText(strhumidite);
+        this.wind.setText(strwindspeed);
+        this.pression.setText(strpression);
 
         if (humidite<90 && lux>= 100){
             weather.setBackgroundResource(R.drawable.ic_baseline_wb_sunny_24);
@@ -133,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             runOnUiThread(new Runnable(){
                 public void run() {
-                    setData(donnees.getHumidity(), donnees.getTemperature(), donnees.getLuminosity());
+                    setData(donnees.getHumidity(), donnees.getTemperature(), donnees.getLuminosity(),donnees.getWindspeed(),donnees.getPressure());
                 }
             });;
         }
