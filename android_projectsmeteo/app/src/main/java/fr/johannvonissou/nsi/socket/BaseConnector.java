@@ -1,5 +1,6 @@
 package fr.johannvonissou.nsi.socket;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -13,8 +14,9 @@ public abstract class BaseConnector {
 		this.events = new CopyOnWriteArrayList<>();
 	}
 	
-	public abstract void open();
-	public abstract void close();
+	public abstract void open() throws IOException;
+	public abstract void close() throws IOException;
+	public abstract void reboot() throws IOException;
 	
 	public void registerListener(ConnectionListener listener) {
 		this.events.add(listener);

@@ -9,6 +9,7 @@ import java.net.SocketException;
 
 import fr.johannvonissou.nsi.socket.ConnectionHandler;
 import fr.johannvonissou.nsi.socket.packets.Packet;
+import fr.johannvonissou.nsi.socket.packets.PacketPing;
 
 public class ServerClientThread extends ConnectionHandler implements Runnable{
 
@@ -47,6 +48,11 @@ public class ServerClientThread extends ConnectionHandler implements Runnable{
 	}
 	
 	@Override
+	public void reboot() throws IOException{
+		throw new IOException("Impossible de redémarrer une instance client du serveur.");
+	}
+	
+	@Override
 	public void sendPacket(Packet packet) {
 		try {
 			this.out.writeObject(packet);
@@ -63,7 +69,16 @@ public class ServerClientThread extends ConnectionHandler implements Runnable{
 		while(true) {
 			try {
 				o = this.in.readObject();
-				if(o instanceof Packet) this.si.actionPacketReceiveListener((Packet) o);
+				if(o instanceof Packet) {
+					if(o instanceof PacketPing) {
+						PacketPing pp = (PacketPing) o;
+						pp.setRelayTime(System.currentTimeMillis());
+						this.sendPacket(pp);
+						continue;
+					}
+					
+					this.si.actionPacketReceiveListener((Packet) o);
+				}
 			}catch(EOFException | SocketException e) {
 				break;
 			}catch(Exception ex) {

@@ -18,7 +18,13 @@ public class PacketWeatherUpdate implements Packet{
 		this.setLuminosity(luminosity);
 	}
 	
-	public PacketWeatherUpdate() {}
+	public PacketWeatherUpdate() {
+		this.setTemperature(-9000);
+		this.setHumidity(-1);
+		this.setLuminosity(-1);
+		this.setWindspeed(-1);
+		this.setPressure(-1);
+	}
 
 	public double getTemperature() {
 		return this.temperature;

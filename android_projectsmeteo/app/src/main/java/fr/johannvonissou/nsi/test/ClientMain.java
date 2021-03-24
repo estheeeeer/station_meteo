@@ -6,7 +6,7 @@ import fr.johannvonissou.nsi.socket.ConnectionHandler;
 import fr.johannvonissou.nsi.socket.ConnectionListener;
 import fr.johannvonissou.nsi.socket.client.Client;
 import fr.johannvonissou.nsi.socket.packets.Packet;
-import fr.johannvonissou.nsi.socket.packets.PacketText;
+import fr.johannvonissou.nsi.socket.packets.PacketPing;
 import fr.johannvonissou.nsi.socket.packets.PacketWeatherUpdate;
 
 public class ClientMain {
@@ -18,12 +18,16 @@ public class ClientMain {
 				
 				@Override
 				public void onPacketReceive(Packet o) {
-					System.out.println("Packet reçu : " + o);
+					//System.out.println("Packet reçu : " + o);
 					
 					if(o instanceof PacketWeatherUpdate) {
 						PacketWeatherUpdate w = (PacketWeatherUpdate) o;
 						System.out.println(w);
-						c.sendPacket(new PacketText("reçu :P"));
+					}else if(o instanceof PacketPing) {
+						PacketPing pp = (PacketPing) o;
+						if(pp.hasBeenRelayed()) {
+							System.out.println("ping=" + pp.getPing());
+						}
 					}
 				}
 

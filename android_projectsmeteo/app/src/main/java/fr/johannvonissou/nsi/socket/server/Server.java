@@ -10,10 +10,11 @@ import fr.johannvonissou.nsi.socket.BaseConnector;
 import fr.johannvonissou.nsi.socket.ConnectionHandler;
 
 public class Server extends BaseConnector implements Runnable{
-
+	
 	private List<ConnectionHandler> clients;
 	private ServerSocket server;
 	private Thread t;
+	private int port;
 	
 	public Server(int port) throws IOException {
 		this.clients = new CopyOnWriteArrayList<>();
@@ -48,9 +49,21 @@ public class Server extends BaseConnector implements Runnable{
 				this.server.close();
 				this.t.interrupt();
 				this.t = null;
+				this.clients.clear();
 			}catch (IOException ex) {
 				ex.printStackTrace();
 			}
+		}
+	}
+	
+	@Override
+	public void reboot() {
+		try {
+			this.close();
+			this.server = new ServerSocket(this.port);
+			this.open();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -76,5 +89,13 @@ public class Server extends BaseConnector implements Runnable{
 	
 	public Thread getThread() {
 		return this.t;
+	}
+
+	public int getPort() {
+		return this.port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
 	}
 }
