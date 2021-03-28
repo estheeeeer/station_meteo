@@ -19,7 +19,7 @@ public class ServerController implements ConnectionListener, SerialListener{
 	public void start() {
 		try {
 			this.startSocket();
-			//this.startSerial();
+			this.startSerial();
 		}catch(Exception e) {
 			e.printStackTrace();
 			System.err.println("Erreur trouvée, démarrage impossible.");

@@ -4,11 +4,12 @@ public class PacketWeatherUpdate implements Packet{
 
 	private static final long serialVersionUID = -2929370806867320034L;
 	
-	private double temperature, humidity, windspeed, pressure, luminosity;
+	private double temperature, humidity, windspeed, pressure;
+	private int luminosity, pollution;
 	private long date;
 	
 	public PacketWeatherUpdate(long date, double temperature, double humidity,
-			double windspeed, double pressure, double luminosity) {
+			double windspeed, double pressure, int luminosity, int pollution) {
 		
 		this.setTemperature(temperature);
 		this.setHumidity(humidity);
@@ -16,6 +17,7 @@ public class PacketWeatherUpdate implements Packet{
 		this.setPressure(pressure);
 		this.setDate(date);
 		this.setLuminosity(luminosity);
+		this.setPollution(pollution);
 	}
 	
 	public PacketWeatherUpdate() {
@@ -24,6 +26,7 @@ public class PacketWeatherUpdate implements Packet{
 		this.setLuminosity(-1);
 		this.setWindspeed(-1);
 		this.setPressure(-1);
+		this.setPollution(-1);
 	}
 
 	public double getTemperature() {
@@ -66,18 +69,27 @@ public class PacketWeatherUpdate implements Packet{
 		this.date = date;
 	}
 	
-	public double getLuminosity() {
+	public int getLuminosity() {
 		return this.luminosity;
 	}
 
-	public void setLuminosity(double luminosity) {
+	public void setLuminosity(int luminosity) {
 		this.luminosity = luminosity;
+	}
+
+	public int getPollution() {
+		return this.pollution;
+	}
+
+	public void setPollution(int pollution) {
+		this.pollution = pollution;
 	}
 
 	@Override
 	public String toString() {
 		return "date: " + this.date + ", temperature: " + this.temperature +
 				", humidity: " + this.humidity + ", pressure: " + this.pressure + 
-				", windspeed: " + this.windspeed + ", luminosity: " + this.luminosity;
+				", windspeed: " + this.windspeed + ", luminosity: " + this.luminosity + 
+				", pollution: " + this.pollution;
 	}
 }

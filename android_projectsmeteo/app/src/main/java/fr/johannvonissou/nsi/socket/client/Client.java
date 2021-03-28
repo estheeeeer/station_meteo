@@ -10,27 +10,42 @@ import fr.johannvonissou.nsi.socket.ConnectionHandler;
 import fr.johannvonissou.nsi.socket.ConnectionSaver;
 import fr.johannvonissou.nsi.socket.packets.Packet;
 
-public class Client extends ConnectionHandler{
+public class Client extends ConnectionHandler implements Runnable{
 	
 	private final int CONNECTIONSAVER_DELAY = 1000;
 
+	private boolean async, tstarted;
 	private ClientServerThread cst;
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
 	private ConnectionSaver saver;
+	private Thread thread;
 	private String ip;
 	private int port;
 	
-	public Client(String ip, int port) throws IOException {
-		super(new Socket(ip, port));
+	public Client(String ip, int port, boolean async) throws IOException {
+		super((async) ? null : new Socket(ip, port));
 		this.setIp(ip);
 		this.setPort(port);
+		this.setAsync(async);
+		if(this.async) {
+			this.thread = new Thread(this);
+			this.thread.setName("client");
+			this.tstarted = false;
+		}
+	}
+	
+	public void startSaver() {
 		this.saver = new ConnectionSaver(this, this.CONNECTIONSAVER_DELAY);
 		this.saver.start();
 	}
 	
-	@Override
-	public void open() throws IOException{
+	public void stopAll() {
+		this.saver.stopSaver();
+		this.thread.interrupt();
+	}
+	
+	private void openConnection() throws IOException {
 		this.out = new ObjectOutputStream(super.getSocket().getOutputStream());
 		this.in = new ObjectInputStream(super.getSocket().getInputStream());
 		
@@ -40,7 +55,17 @@ public class Client extends ConnectionHandler{
 	}
 	
 	@Override
-	public void close() throws IOException{
+	public void open() throws IOException {
+		if(this.async && !this.tstarted) {
+			this.thread.start();
+			this.tstarted = true;
+		}else {
+			this.openConnection();
+		}
+	}
+	
+	@Override
+	public void close() throws IOException {	
 		try {
 			if(this.out != null) this.out.close();
 			if(this.in != null) this.in.close();
@@ -53,8 +78,8 @@ public class Client extends ConnectionHandler{
 	}
 	
 	@Override
-	public void reboot() throws IOException{
-		this.close(); 
+	public void reboot() throws IOException {
+		this.close();
 		super.setSocket(new Socket(this.ip, this.port));
 		this.open();
 	}
@@ -87,5 +112,29 @@ public class Client extends ConnectionHandler{
 
 	public void setPort(int port) {
 		this.port = port;
+	}
+	
+	public boolean isAsync() {
+		return this.async;
+	}
+
+	public void setAsync(boolean async) {
+		this.async = async;
+	}
+
+	@Override
+	public void run() {
+		try {
+			super.setSocket(new Socket(this.ip, this.port));
+			this.openConnection();
+		} catch (IOException e) {
+			e.printStackTrace();
+			try {
+				this.close();
+				this.saver.stopSaver();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
 	}
 }

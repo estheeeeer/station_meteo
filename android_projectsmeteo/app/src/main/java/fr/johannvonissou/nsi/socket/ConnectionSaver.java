@@ -16,6 +16,7 @@ public class ConnectionSaver extends Thread implements ConnectionListener{
 		this.ch.registerListener(this);
 		this.setConnectionState(ConnectionSaverState.LOADING);
 		this.alive = true;
+		System.out.println("Connexion initale au saver.");
 	}
 	
 	public void reconnect() {
@@ -28,6 +29,11 @@ public class ConnectionSaver extends Thread implements ConnectionListener{
 			//ex.printStackTrace();
 			System.err.println("Echec. (" + ex.getClass().getSimpleName() + ":"+ ex.getMessage() + ")");
 		}
+	}
+	
+	public void stopSaver() {
+		this.alive = false;
+		this.interrupt();
 	}
 	
 	private void sendPing() {
@@ -58,7 +64,9 @@ public class ConnectionSaver extends Thread implements ConnectionListener{
 				}else {
 					this.sendPing();
 				}
-			} catch (Exception e) {
+			}catch(InterruptedException e) {
+				return;
+			}catch(Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -81,8 +89,7 @@ public class ConnectionSaver extends Thread implements ConnectionListener{
 
 	@Override
 	public void onDisconnect(ConnectionHandler ch) {
-		this.alive = false;
-		super.interrupt();
+		this.stopSaver();
 	}
 	
 	public long getDelay() {

@@ -1,6 +1,7 @@
 package fr.johannvonissou.nsi.test;
 
 import java.io.IOException;
+import java.util.Set;
 
 import fr.johannvonissou.nsi.socket.ConnectionHandler;
 import fr.johannvonissou.nsi.socket.ConnectionListener;
@@ -12,7 +13,7 @@ import fr.johannvonissou.nsi.socket.packets.PacketWeatherUpdate;
 public class ClientMain {
 	public static void main(String[] args) {		
 		try {
-			Client c = new Client("localhost", 2568);
+			Client c = new Client("localhost", 2568, false);
 			
 			c.registerListener(new ConnectionListener() {
 				
@@ -41,6 +42,11 @@ public class ClientMain {
 			});
 			
 			c.open();
+			c.startSaver();
+			System.out.println("issou");
+			
+			Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+			threadSet.forEach(System.out::println);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}	

@@ -13,7 +13,7 @@ import fr.johannvonissou.nsi.socket.packets.PacketWeatherUpdate;
 
 public class SerialViewer implements Runnable {
 	
-	private final String[] usedKeywords = {"TEMPÉRATURE", "LUMINOSITÉ"};
+	private final String[] usedKeywords = {"TEMPÉRATURE", "LUMINOSITÉ", "POLLUTION"};
 	private final String charDevice = "ttyACM0";
 	
 	private volatile boolean asyncExit;
@@ -89,7 +89,8 @@ public class SerialViewer implements Runnable {
 		PacketWeatherUpdate pwu = new PacketWeatherUpdate();
 		pwu.setDate(System.currentTimeMillis());
 		pwu.setTemperature(this.parsedData.get(this.usedKeywords[0]));
-		pwu.setLuminosity(this.parsedData.get(this.usedKeywords[1]));
+		pwu.setLuminosity(this.parsedData.get(this.usedKeywords[1]).intValue());
+		pwu.setPollution(this.parsedData.get(this.usedKeywords[2]).intValue());
 		return pwu;
 	}
 	
