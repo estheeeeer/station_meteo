@@ -12,7 +12,9 @@ import android.view.View;
 
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -38,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView luminosite;
     private Map<String, String> datemap;
     private Map<String, String> monthsmap;
+    private File file;
+    private ConfigManager cm;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,12 +80,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.monthsmap.put("nov.", "Novembre");
         this.monthsmap.put("dec.", "Décembre");
         this.setData(-1,-9000,-1,-1,-1);
-        try {
-            Client c = new Client("192.168.1.18",2568);
-            c.open();
-            c.registerListener(this);
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        this.file = new File(super.getFilesDir(),"config_meteo.txt");
+        this.cm = new ConfigManager(this.file);
+        String ip = this.cm.read("ip");
+        if(ip != null) {
+            try {
+                Client c = new Client(ip, 2568);
+                c.open();
+                c.registerListener(this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Toast.makeText(getApplicationContext(),"Veuillez définir une adresse ip",Toast.LENGTH_SHORT).show();
         }
 
         weather.setOnClickListener(this::onClick);

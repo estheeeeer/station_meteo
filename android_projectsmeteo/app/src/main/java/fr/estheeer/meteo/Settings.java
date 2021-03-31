@@ -22,11 +22,18 @@ import java.io.OutputStreamWriter;
 import java.util.Set;
 
 public class Settings extends AppCompatActivity implements Button.OnClickListener {
+
     private EditText edit_ip;
     private EditText edit_time;
     private String str;
     private File file;
     private String read;
+    private ConfigManager cm;
+    private String ip_string;
+    private String time_string;
+    private String ip;
+    private String time;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
@@ -34,27 +41,54 @@ public class Settings extends AppCompatActivity implements Button.OnClickListene
         savebutton.setOnClickListener(this);
         this.edit_ip = findViewById(R.id.editip);
         this.edit_time = findViewById(R.id.edittime);
-        this.str = "{time:"+edit_time.getText().toString()+", ip:"+edit_ip.getText().toString()+"}";
         this.file = new File(super.getFilesDir(),"config_meteo.txt");
-        System.out.println("----------------------------------------------------"+super.getFilesDir());
+        this.cm = new ConfigManager(file);
+        this.time = cm.read("time");
+        this.ip = cm.read("ip");
+        if (!file.exists()){
+            this.edit_time.setHint("ex : 5");
+            this.edit_ip.setHint("ex : 192.168.254.254");
 
+        } else if(ip == null){
+            this.edit_ip.setHint("ex : 192.168.254.254");
+            this.edit_time.setHint(time);
+        } if(time==null){
+            this.edit_time.setHint("ex : 5");
+            this.edit_ip.setHint(ip);
+        }else{
+            this.edit_ip.setHint(ip);
+            this.edit_time.setHint(time);
+        }
     }
 
     @Override
     public void onClick(View v) {
-        if (!file.exists()){
+        if (!file.exists()) {
             try {
                 this.file.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }else if(cm.read("time")==null || cm.read("ip")==null){
+            try {
+                this.file.delete();
+                this.file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        try {
-            FileOutputStream outputStreamWriter = new FileOutputStream(file);
-            outputStreamWriter.write(str.getBytes());
-            outputStreamWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        ip_string = edit_ip.getText().toString();
+        time_string = edit_time.getText().toString();
+        if( time_string!="" || ip_string != "") {
+            this.str = "{time:" + this.time_string + ",ip:" + this.ip_string + "}";
+            cm.write(this.str);
+        }else if(ip_string.isEmpty()){
+            this.str = "{time:" + this.time_string + ",ip:" + this.ip + "}";
+            cm.write(this.str);
+        }else  if(time_string.isEmpty()){
+            this.str = "{time:" + this.time+ ",ip:" + this.ip_string+ "}";
+            cm.write(this.str);
         }
+        Toast.makeText(getApplicationContext(),"Paramètres mis à jour",Toast.LENGTH_SHORT).show();
     }
 }
