@@ -42,20 +42,25 @@ public class Settings extends AppCompatActivity implements Button.OnClickListene
         this.edit_ip = findViewById(R.id.editip);
         this.edit_time = findViewById(R.id.edittime);
         this.file = new File(super.getFilesDir(),"config_meteo.txt");
-        this.cm = new ConfigManager(file);
-        this.time = cm.read("time");
+        this.cm = new ConfigManager(this.file);
         this.ip = cm.read("ip");
-        if (!file.exists()){
+        this.time = cm.read("time");
+        System.out.println("----------------------ip = "+this.ip);
+        if (!file.exists()) {
             this.edit_time.setHint("ex : 5");
             this.edit_ip.setHint("ex : 192.168.254.254");
-
+            System.out.println("--------------------file = "+file);
+        }else if(ip == null || this.time == null){
+            this.edit_time.setHint("ex : 5");
+            this.edit_ip.setHint("ex : 192.168.254.254");
         } else if(ip == null){
             this.edit_ip.setHint("ex : 192.168.254.254");
             this.edit_time.setHint(time);
-        } if(time==null){
+        }else if(time==null){
             this.edit_time.setHint("ex : 5");
             this.edit_ip.setHint(ip);
         }else{
+            System.out.println("ISSSSSSSSSSSSSSSSSSOU");
             this.edit_ip.setHint(ip);
             this.edit_time.setHint(time);
         }
@@ -65,18 +70,13 @@ public class Settings extends AppCompatActivity implements Button.OnClickListene
     public void onClick(View v) {
         if (!file.exists()) {
             try {
-                this.file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }else if(cm.read("time")==null || cm.read("ip")==null){
-            try {
-                this.file.delete();
+                System.out.println("--------file doesn't exists");
                 this.file.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
         ip_string = edit_ip.getText().toString();
         time_string = edit_time.getText().toString();
         if( time_string!="" || ip_string != "") {

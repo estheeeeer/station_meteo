@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView pression;
     private TextView humidity;
     private TextView luminosite;
+    private TextView pollution;
     private Map<String, String> datemap;
     private Map<String, String> monthsmap;
     private File file;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.pression = super.findViewById(R.id.pression);
         this.humidity = super.findViewById(R.id.humidity);
         this.luminosite = super.findViewById(R.id.lux);
+        this.pollution = super.findViewById(R.id.qualite_air);
         this.datemap = new HashMap<>();
         this.monthsmap  = new HashMap<>();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd");
@@ -79,16 +81,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.monthsmap.put("oct.", "Octobre");
         this.monthsmap.put("nov.", "Novembre");
         this.monthsmap.put("dec.", "Décembre");
-        this.setData(-1,-9000,-1,-1,-1);
+        this.setData(-1,-9000,-1,-1,-1,-1);
 
         this.file = new File(super.getFilesDir(),"config_meteo.txt");
         this.cm = new ConfigManager(this.file);
         String ip = this.cm.read("ip");
         if(ip != null) {
             try {
-                Client c = new Client(ip, 2568);
+                Client c = new Client(ip, 2568,true);
                 c.open();
                 c.registerListener(this);
+                c.startSaver();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -96,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(getApplicationContext(),"Veuillez définir une adresse ip",Toast.LENGTH_SHORT).show();
         }
 
-        weather.setOnClickListener(this::onClick);
+        weather.setOnClickListener(this);
 
     }
 
@@ -105,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent i = new Intent(this, Settings.class);
         super.startActivity(i);
     }
-    public void setData(double humidite,double tempe, double lux,double wind, double pression){
+    public void setData(double humidite,double tempe, double lux,double wind, double pression,double pollution){
         Date dated = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("E;dd;MMM");
         String strdate = formatter.format(dated);
@@ -114,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String monthfr = monthsmap.get(arrdate[2]);
         date.setText(dayfr + " " + arrdate[1] + " " + monthfr);
 
-        String temperature = "impossible";
+        String temperature = "Impossible";
         if(tempe!=-9000) {
             temperature = tempe + "°C";
             temp.setText(temperature);
@@ -122,35 +125,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             temp.setText(temperature);
         }
 
-        String strhumidite = "impossible";
+        String strhumidite = "Impossible";
         if(humidite != -1){
             strhumidite = String.valueOf(humidite+"%");
         }
 
-        String strlux = "impossible";
+        String strlux = "Impossible";
         if (lux != -1){
             strlux = String.valueOf(lux);
         }
 
-        String strwindspeed = "impossible";
+        String strwindspeed = "Impossible";
         if (wind != -1){
             strwindspeed = String.valueOf(wind);
         }
 
-        String strpression = "impossible";
+        String strpression = "Impossible";
         if (pression != -1){
             strpression = String.valueOf(pression);
+        }
+
+        String strpollution = "Impossible";
+        if (pollution != -1){
+            strpollution = String.valueOf(pollution);
         }
 
         this.luminosite.setText(strlux);
         this.humidity.setText(strhumidite);
         this.wind.setText(strwindspeed);
         this.pression.setText(strpression);
+        this.pollution.setText(strpollution);
 
-        if (humidite<90 && lux>= 100){
-            weather.setBackgroundResource(R.drawable.ic_baseline_wb_sunny_24);
+        if (strhumidite.equalsIgnoreCase("Impossible")||(strlux.equalsIgnoreCase("Impossible"))){
+            weather.setBackgroundResource(R.drawable.ic_baseline_close_24);
         }else if (humidite<90 && lux<=100) {
             weather.setBackgroundResource(R.drawable.ic_cloudy_clouds_and_sun_svgrepo_com);
+        }else if (humidite<90 && lux>= 100){
+            weather.setBackgroundResource(R.drawable.ic_baseline_wb_sunny_24);
         }else{
             weather.setBackgroundResource(R.drawable.ic__277949122);
         }
@@ -160,10 +171,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onPacketReceive(Packet o) {
         if (o instanceof PacketWeatherUpdate) {
             PacketWeatherUpdate donnees = (PacketWeatherUpdate) o;
-
+            System.out.println("Packet received");
             runOnUiThread(new Runnable(){
                 public void run() {
-                    setData(donnees.getHumidity(), donnees.getTemperature(), donnees.getLuminosity(),donnees.getWindspeed(),donnees.getPressure());
+                    setData(donnees.getHumidity(), donnees.getTemperature(), donnees.getLuminosity(),donnees.getWindspeed(),donnees.getPressure(),donnees.getPollution());
                 }
             });;
         }
@@ -171,11 +182,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onConnect(ConnectionHandler ch) {
-
     }
 
     @Override
     public void onDisconnect(ConnectionHandler ch) {
-
+        Toast.makeText(getApplicationContext(),"Vous avez été déconnecté du serveur",Toast.LENGTH_LONG).show();
     }
 }

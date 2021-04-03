@@ -6,7 +6,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/grey">
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginVertical="20sp"
+        android:textSize="40sp"
+        android:textColor="@color/white"
+        android:text="Paramètres"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,6 +36,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="25sp"
                 android:textColorHint="@color/white_transparent"
+                android:textColor="@color/white"
                 android:background="@null"
                 android:inputType="phone"
                 android:hint="5"/>
@@ -79,9 +87,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5sp"
                 android:textSize="25sp"
+                android:textColor="@color/white"
                 android:textColorHint="@color/white_transparent"
                 android:background="@null"
-                android:inputType="phone"
                 android:hint="192.168."/>
         </LinearLayout>
     </LinearLayout>
@@ -90,6 +98,7 @@
         android:id="@+id/setsettings"
         android:layout_width="45sp"
         android:layout_height="45sp"
+        android:layout_gravity="center"
         android:layout_marginTop="20sp"
         android:background="@drawable/ic_baseline_keyboard_arrow_down_24"/>
 
